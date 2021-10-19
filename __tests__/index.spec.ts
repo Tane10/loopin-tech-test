@@ -10,7 +10,9 @@ import { findNextWorkingDay } from "../src/index";
 // - Are the dates set to 8:30am locale `en` time?
 
 describe("Find next working day", () => {
-  test("Should accept todays date and return a max of the next 5 working days", () => {});
+  test("Should accept todays date and return a max of the next 5 working days", () => {
+      
+  });
 
   test("Should remove christmas from any working week", () => {});
 

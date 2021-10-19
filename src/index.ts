@@ -1,53 +1,75 @@
-// take today and return the next 5 working days
-import dayjs from "dayjs";
-// only handling date as a string
-// not handling time
+import dayjs, { Dayjs } from "dayjs";
+import CustomError from "./error";
 
-// format all dates to uk -> .format('DD-MM-YYYY')
-// array doestn' have to include todays date
+export default class FindNextWorkingDays {
+  //UK date-time formate by default
+  private dateFormate: string = "DD/MM/YYYY";
+  public chosenHolidays: string[];
 
-// daysjs plugins needed
-// - var weekday = require('dayjs/plugin/weekday')
-// - var isToday = require('dayjs/plugin/isToday')
-
-// holiday date formate is DD-MM-YYYY
-const holidaysArray: string[] = ["25-12-2021", "01-01-22"];
-
-const ukDateFormate: string = "DD/MM/YYYY";
-
-function convertStringToDayjs(dates: string[]): string[] {
-  let dayjsFormateDatesArray = [];
-
-  for (let date of dates) {
-    const formateDate = dayjs(date);
-    formateDate.isValid()
-      ? dayjsFormateDatesArray.push(formateDate.format(ukDateFormate))
-      : null;
+  constructor(dateFormate, chosenHolidays) {
+    this.dateFormate = dateFormate;
+    this.chosenHolidays = chosenHolidays;
   }
 
-  return dayjsFormateDatesArray;
-}
+  private convertHolidaysToDayjs(dates: string[]): Dayjs[] {
+    let dayjsFormateDatesArray = [];
 
-export function findNextWorkingDay(today: Date): void {
-  // convert todays date and holidays to daysjs format
-  const dayjsToday: dayjs.Dayjs = dayjs(today);
-  const formateDates = convertStringToDayjs(holidaysArray);
+    for (let date of dates) {
+      const formateDate = dayjs(date);
+      formateDate.isValid() ? dayjsFormateDatesArray.push(formateDate) : null;
+    }
 
-  let nextWorkingDays = [];
-
-  for (let i = 0; i < 5; i++) {
-    const nextDay = dayjsToday.add(i, "day").format(ukDateFormate);
-
-    // if no equal to holiday then add to array else dont
-    nextWorkingDays.push(nextDay);
+    return dayjsFormateDatesArray;
   }
 
-  console.log(nextWorkingDays);
+  private validateDayOfTheWeek(dateToValidate: Dayjs): Dayjs {
+    const day = dayjs(dateToValidate).day();
+    if (day === 0 || day === 6) {
+      return dateToValidate.add(1, "day");
+    } else {
+      return dateToValidate;
+    }
+  }
 
-  // Code to return up to the next five working days,
-  // excluding any holiday days
+  private getNextFiveWorkingDays(date: Dayjs, holidays: string[]): Dayjs[] {
+    let nextWorkingDays: Dayjs[] = [];
+    let filteredArray: Dayjs[] = [];
+
+    const formateHolidaysDates = this.convertHolidaysToDayjs(holidays);
+
+    for (let i = 0; i < 5; i++) {
+      const nextDay = this.validateDayOfTheWeek(date.add(i, "day"));
+      nextWorkingDays.push(nextDay);
+    }
+
+    for (const holiday of formateHolidaysDates) {
+      filteredArray = nextWorkingDays.filter(
+        (date) => !date.isSame(holiday, "day")
+      );
+    }
+    return filteredArray;
+  }
+
+  public findNextWorkingDay(today: Date): string[] | CustomError {
+    // convert todays date and holidays to daysjs format
+    const dayjsToday: Dayjs = dayjs(today);
+
+    const nextWorkingDaysArray: string[] = [];
+
+    if (dayjsToday.isValid()) {
+      let workingDays: Dayjs[] = this.getNextFiveWorkingDays(
+        dayjsToday,
+        this.chosenHolidays
+      );
+
+      workingDays.forEach((val) =>
+        nextWorkingDaysArray.push(val.format(this.dateFormate))
+      );
+      return nextWorkingDaysArray;
+    } else {
+      return {
+        message: "Invalid Date",
+      };
+    }
+  }
 }
-
-const todaysDate = new Date();
-
-findNextWorkingDay(todaysDate);
