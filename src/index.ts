@@ -1,12 +1,12 @@
 import dayjs, { Dayjs } from "dayjs";
 import CustomError from "./error";
 
-export default class FindNextWorkingDays {
+export default class FindNextWorkingDayService {
   //UK date-time formate by default
   private dateFormate: string = "DD/MM/YYYY";
   public chosenHolidays: string[];
 
-  constructor(dateFormate, chosenHolidays) {
+  constructor(chosenHolidays: string[], dateFormate?: string) {
     this.dateFormate = dateFormate;
     this.chosenHolidays = chosenHolidays;
   }
@@ -50,7 +50,10 @@ export default class FindNextWorkingDays {
     return filteredArray;
   }
 
-  public findNextWorkingDay(today: Date): string[] | CustomError {
+  public findNextWorkingDay(
+    today: Date,
+    selectedHolidays?: string[]
+  ): string[] | CustomError {
     // convert todays date and holidays to daysjs format
     const dayjsToday: Dayjs = dayjs(today);
 
@@ -59,7 +62,7 @@ export default class FindNextWorkingDays {
     if (dayjsToday.isValid()) {
       let workingDays: Dayjs[] = this.getNextFiveWorkingDays(
         dayjsToday,
-        this.chosenHolidays
+        selectedHolidays || this.chosenHolidays
       );
 
       workingDays.forEach((val) =>
