@@ -4,8 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon ./src/index.ts",
-    "test": "jest"
+    "dev": "nodemon src/index.ts",
+    "test": "jest",
+    "build": "tsc -b",
+    "start": "node dist/src/index.js"
   },
   "repository": {
     "type": "git",
