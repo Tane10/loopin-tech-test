@@ -50,10 +50,7 @@ export default class FindNextWorkingDayService {
     return filteredArray;
   }
 
-  public findNextWorkingDay(
-    today: Date,
-    selectedHolidays?: string[]
-  ): string[] | CustomError {
+  public findNextWorkingDay(today: Date): string[] | CustomError {
     // convert todays date and holidays to daysjs format
     const dayjsToday: Dayjs = dayjs(today);
 
@@ -62,7 +59,7 @@ export default class FindNextWorkingDayService {
     if (dayjsToday.isValid()) {
       let workingDays: Dayjs[] = this.getNextFiveWorkingDays(
         dayjsToday,
-        selectedHolidays || this.chosenHolidays
+        this.chosenHolidays
       );
 
       workingDays.forEach((val) =>
@@ -78,7 +75,7 @@ export default class FindNextWorkingDayService {
 }
 
 // uncomment to run service here:
-// const holidays = ["2021-12-25", "2021-01-01", "2021-12-26", "2021-12-27"];
+// const holidays = ["2021-10-20"];
 // const findNextWorkingDayService = new FindNextWorkingDayService(
 //   holidays,
 //   "DD/MM/YYYY"
