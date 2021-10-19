@@ -1,6 +1,6 @@
 # loopin-tech-test
 
-If you would like to run the service and get an output without running the tests then please **uncomment lines 81 - 88** before running using nodemon or in prod
+If you would like to run the service and get an output without running the tests then please **uncomment lines 78 - 84 in src/index.ts** before running using nodemon or in prod
 
 ## Install
 
